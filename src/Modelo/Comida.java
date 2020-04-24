@@ -7,9 +7,14 @@ package Modelo;
 
 import static Modelo.Ingrediente.CONNECTION;
 import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -30,6 +35,8 @@ public class Comida {
     private final String guardarComida = "{call   agregarComida (?,?,?)}";
     private final String eliminarComida = "{call   eliminarComida (?)}";
 
+    private final String obtener_ultimaComida="SELECT MAX(id_comida) as id FROM comida;";
+    private final String actualizar_comida = "update comida set nombre= ?,  temperatura=?, categoria=(select id_categoria from categoria where categoria=?) where id_comida=?;";
     public Comida() {
     }
 
@@ -88,6 +95,40 @@ public class Comida {
     public void setCatego(String catego) {
         this.catego = catego;
     }
+    
+    public Integer id_ultimaComida(){
+        Integer id = 0;
+        try {
+            CONNECTION.conectar();
+            PreparedStatement ps = CONNECTION.getConnection().prepareStatement(obtener_ultimaComida);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next())
+                id = rs.getInt("id");
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return id;
+    }
+    
+    public Boolean actualizar_comida(int id_comida, String nombre, String tempt, String catg){        
+        try{
+            CONNECTION.conectar();
+            PreparedStatement ps = CONNECTION.getConnection().prepareStatement(actualizar_comida);          
+            ps.setString(1,nombre);    
+            ps.setString(2,tempt); 
+            ps.setString(3,catg);  
+            ps.setInt(4,id_comida);  
+            ps.execute();
+            return true;
+        }catch (SQLException e) {
+            System.out.println("Error on Update Comida: "+e.getMessage());
+        }finally {
+            CONNECTION.desconectar();
+        }
+        return false;
+    }
+    
     
     
     

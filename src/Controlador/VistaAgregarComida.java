@@ -7,7 +7,9 @@ package Controlador;
 
 import Modelo.Categoria;
 import Modelo.Comida;
+import Modelo.Estatico;
 import Modelo.Ingrediente;
+import Modelo.Plato;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -36,20 +38,24 @@ public class VistaAgregarComida {
     private Button btn_agregar, btn_eliminar, btn_agregarcomida;
     
     private String txt_comida="";
-    
+    private final String queryIngredientes="select i.nombre as Nombre from ingrediente i, comida c, plato p where p.id_ingrediente = i.id_ingrediente and c.id_comida= p.id_comida and c.id_comida=?;";
     
     private Categoria modeloCategoria;
     private Ingrediente modeloIngrediente;
     private Comida modeloComida;
+    private Plato modeloPlato;
     
     private ObservableList<String> cargarIngredientes;
     private ObservableList<String> cargarComida ;
     private ObservableList<Categoria> cargarCategoria;
     
+    private Integer id_comida=0;
+    
     public VistaAgregarComida() {
         modeloCategoria= new Categoria();
         modeloIngrediente = new Ingrediente();
         modeloComida = new Comida();
+        modeloPlato = new Plato();
         
         cargarCategoria=modeloCategoria.cargarCategoria();
         cargarIngredientes = modeloIngrediente.cargarNombreIngredientes();
@@ -66,6 +72,7 @@ public class VistaAgregarComida {
         root.getStylesheets().add("/Recursos/Estilo/style1.css"); 
         root.setStyle("-fx-background-color: CCFFFF");
         tb_ingrediente = new TableView();
+        Estatico.obtenerTablaDinamica(id_comida, queryIngredientes, tb_ingrediente, "tbl_ingrediente");
         ObservableList<String> temperatura = FXCollections.observableArrayList( "CALIENTE", "FRIO" );
         root.setPadding(new Insets(10));
         lb_title=new Label("PLATO");lb_comida=new Label("COMIDA");lb_categoria=new Label("CATEGORIA");lb_temperatura=new Label("TEMPERATURA");lb_ingrediente=new Label("INGREDIENTES");
@@ -92,22 +99,72 @@ public class VistaAgregarComida {
         root.setTop(vb);
     }
     private void Center(){
-        VBox vb = new VBox(10,lb_comida,tf_comida, lb_categoria,cb_categoria,lb_temperatura,cb_temperatura, btn_agregarcomida);
+        VBox vb = new VBox(20,lb_comida,tf_comida, lb_categoria,cb_categoria,lb_temperatura,cb_temperatura, btn_agregarcomida);
         tf_comida.setPromptText("Nombre de la comida");
         vb.setAlignment(Pos.CENTER_RIGHT);
         vb.setPadding(new Insets(15));
-        root.setCenter(vb);        
+        root.setCenter(vb);    
+        guardar_comida();    
     }
     
     private void Right(){
-        VBox vb = new VBox(15, tf_INGREDIENTE, btn_agregar, btn_eliminar); 
+        VBox vb = new VBox(25, lb_ingrediente, tf_INGREDIENTE, btn_agregar, btn_eliminar); 
         tf_INGREDIENTE.setPromptText("Nombre del Ingrediente");
-        vb.setAlignment(Pos.CENTER);
+        vb.setAlignment(Pos.CENTER_LEFT);
         HBox hb = new HBox(10,tb_ingrediente, vb);
-        VBox vb1 = new VBox(10, lb_ingrediente, hb);
-        vb1.setAlignment(Pos.CENTER);
-        root.setRight(vb1);
+        hb.setAlignment(Pos.CENTER);
+        root.setRight(hb);
+        guardar_ingrediente();
     }
+    
+    private void guardar_comida(){       
+        btn_agregarcomida.setOnMouseClicked(e->{
+            txt_comida = tf_comida.getText().toUpperCase().trim();
+            if(tf_comida.getText().isEmpty()){
+                Estatico.alertas_warning("Campos Vacíos", "Ingrese el nombre de la comida");
+            }else{
+                if(modeloComida.guardarComida( txt_comida , cb_temperatura.getValue().toString(), cb_categoria.getValue().toString())
+                        && id_comida==0 ){
+                    Estatico.alertas_information("Comida "+txt_comida, "Agregado Nueva Comida.\nInserte los ingredientes.", Pos.TOP_CENTER);
+                    id_comida = modeloComida.id_ultimaComida();
+                    System.out.println(id_comida);
+                } else if (id_comida>0 && 
+                        modeloComida.actualizar_comida(id_comida, txt_comida, cb_temperatura.getValue().toString(), cb_categoria.getValue().toString())
+                        ) {
+                    Estatico.alertas_information("Comida "+tf_comida.getText()+" Modificada", "Actualizado Comida", Pos.TOP_CENTER);
+                    
+                    
+                } else {
+                    Estatico.alertas_warning("Error en la base", "Datos erróneos o desconexión");
+                }
+            }
+        });
+    }
+    
+    private void guardar_ingrediente(){
+        btn_agregar.setOnMouseClicked(e->{
+            txt_comida = tf_comida.getText().toUpperCase().trim();
+            if(tf_INGREDIENTE.getText().isEmpty())
+                Estatico.alertas_warning("Campos Vacíos", "Ingrese el nombre del Ingrediente.");
+            else{                
+                if(modeloIngrediente.guardarIngrediente(tf_INGREDIENTE.getText().toUpperCase().trim()))
+                    Estatico.alertas_information("Nuevo Ingrediente", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" añadido.", Pos.TOP_CENTER);                
+                if(modeloPlato.agregarPlato(txt_comida, tf_INGREDIENTE.getText())){
+                    Estatico.alertas_information("Ingrediente Agregado", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" añadido.", Pos.TOP_CENTER);
+                    tf_INGREDIENTE.setText("");
+                    reset_table();
+                }else{
+                    Estatico.alertas_warning("Error en la base", "Datos erróneos o desconexión");         
+                }
+            }
+        });
+    }
+    
+    private void reset_table(){
+        tb_ingrediente.getItems().clear();
+        Estatico.obtenerTablaDinamica(id_comida, queryIngredientes, tb_ingrediente, "tbl_ingrediente");
+    }
+    
     
     private void setTamanio(int size){
         tf_comida.setPrefWidth(size);
