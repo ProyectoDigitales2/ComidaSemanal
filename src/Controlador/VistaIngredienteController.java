@@ -81,15 +81,15 @@ public class VistaIngredienteController implements Initializable {
     @FXML
     private void action_eliminar_ingrediente(ActionEvent event) {
         if(tf_eliminar.getText().isEmpty() || tf_eliminar.getText().equals(""))
-            JOptionPane.showMessageDialog(null, "Campo vacío, ingrese el ingrediente a eliminar","ERROR" ,JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Campo vacío, ingrese el ingrediente a modificar","ERROR" ,JOptionPane.WARNING_MESSAGE);
         else {                  
-            if(modeloIngrediente.eliminarIngrediente(tf_eliminar.getText().toUpperCase())){
-                JOptionPane.showMessageDialog(null, "Ingrediente "+tf_eliminar.getText()+" borrado exitosamente");
+            if(modeloIngrediente.modificarIngrediente(tf_eliminar.getText().toUpperCase())){
+                JOptionPane.showMessageDialog(null, "Ingrediente "+tf_eliminar.getText()+" modificado exitosamente");
                 tf_eliminar.setText("");
                 llenarTablaIngrediente();                
             }
             else
-                JOptionPane.showMessageDialog(null, "Error al eliminar ingrediente","ERROR" ,JOptionPane.WARNING_MESSAGE); 
+                JOptionPane.showMessageDialog(null, "Error al modificar ingrediente","ERROR" ,JOptionPane.WARNING_MESSAGE); 
         }
         
     }

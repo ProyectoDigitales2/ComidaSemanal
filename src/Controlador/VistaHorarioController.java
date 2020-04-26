@@ -6,11 +6,10 @@
 package Controlador;
 
 import Modelo.Comida;
+import Modelo.Estatico;
 import Modelo.Fecha_Comida;
 import java.net.URL;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -18,12 +17,21 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import org.controlsfx.control.textfield.TextFields;
 
 /**
@@ -32,186 +40,117 @@ import org.controlsfx.control.textfield.TextFields;
  * @author Rogencio
  */
 public class VistaHorarioController implements Initializable {
-
-    @FXML private Label lbl_fechaDomingos;
     
-    @FXML private TextField txf_lunch_domingo;
-    @FXML private TextField txf_lunch_lunes;
-    @FXML private TextField txf_lunch_martes;
-    @FXML private TextField txf_lunch_miercoles;
-    @FXML private TextField txf_lunch_jueves;
-    @FXML private TextField txf_lunch_viernes;
-    @FXML private TextField txf_lunch_sabado;
-    @FXML private TextField txf_dinner_domingo;
-    @FXML private TextField txf_dinner_lunes;
-    @FXML private TextField txf_dinner_martes;
-    @FXML private TextField txf_dinner_miercoles;
-    @FXML private TextField txf_dinner_jueves;
-    @FXML private TextField txf_dinner_viernes;
-    @FXML private TextField txf_dinner_sabado;
     
     private Comida modeloComida= new Comida();    
-    private ObservableList<String> datosComida =modeloComida.cargarNombreComida();
-    private ArrayList<TextField> textFieldsComida;
-    private ArrayList<Label> textLabelsFechas;
-    private ArrayList<Label> textDias;
-    
+    private ObservableList<String> datosComida =modeloComida.cargarNombreComida();    
     private Fecha_Comida modelo_fecha_comida= new Fecha_Comida();
+    private ObservableList rowListCompSeleccionado;
 
-    @FXML private DatePicker DatePicker;
+    private DatePicker DatePicker;
     
-    @FXML private Label lbl_fecha_domingo;
-    @FXML private Label lbl_fecha_lunes;
-    @FXML private Label lbl_fecha_martes;
-    @FXML private Label lbl_fecha_miercoles;
-    @FXML private Label lbl_fecha_jueves;
-    @FXML private Label lbl_fecha_viernes;
-    @FXML private Label lbl_fecha_sabado;
+    @FXML private DatePicker dp_planificacion;
+    @FXML private TableView tbl_planificación;
+    @FXML private TextField tf_comida;
+    @FXML private DatePicker dp_fechacomida;
+    @FXML private ComboBox cb_tipo;
+    @FXML private Button btn_guardar_horario;
+    @FXML private Button btn_modificarhorario;
+    @FXML private Button btn_eliminarhorario;
     
-    @FXML private Label lbl_dia1;
-    @FXML private Label lbl_dia2;
-    @FXML private Label lbl_dia3;
-    @FXML private Label lbl_dia4;
-    @FXML private Label lbl_dia5;
-    @FXML private Label lbl_dia6;
-    @FXML private Label lbl_dia7;
-    
+    public final String get_fecha_comida = "select fa.id_fecha_comida as ID, c.nombre as Comida, fa.fecha as Fecha, fa.tipo as Tipo \n" +
+"from fecha_comida fa join comida c on c.id_comida= fa.id_comida\n" +
+"where fa.fecha between '";
+    private String Query;
+    @FXML
+    private AnchorPane root;
     
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        textFieldsComida= new ArrayList<>();
-        textLabelsFechas= new ArrayList<>();
-        textDias= new ArrayList<>();
-        
-        almacenarTextFields();
-        almacenarLabels();
-        almacenarLabelsDias();
-        //actualizar_horarios();
-        
-        for (TextField tf : textFieldsComida){
-            TextFields.bindAutoCompletion(tf, datosComida);
-        }
-        
+        cb_tipo.getItems().addAll("DESAYUNO","ALMUERZO","MERIENDA"); cb_tipo.setValue("ALMUERZO");
+        TextFields.bindAutoCompletion(tf_comida, datosComida);
     }  
-    
-    private void almacenarTextFields(){
-        textFieldsComida.add(txf_lunch_domingo);
-        textFieldsComida.add(txf_lunch_lunes);
-        textFieldsComida.add(txf_lunch_martes);
-        textFieldsComida.add(txf_lunch_miercoles);
-        textFieldsComida.add(txf_lunch_jueves);
-        textFieldsComida.add(txf_lunch_viernes);
-        textFieldsComida.add(txf_lunch_sabado);
-        textFieldsComida.add(txf_dinner_domingo);
-        textFieldsComida.add(txf_dinner_lunes);
-        textFieldsComida.add(txf_dinner_martes);
-        textFieldsComida.add(txf_dinner_miercoles);
-        textFieldsComida.add(txf_dinner_jueves);
-        textFieldsComida.add(txf_dinner_viernes);
-        textFieldsComida.add(txf_dinner_sabado);
-    }
-    
-    private void almacenarLabels(){
-        textLabelsFechas.add(lbl_fecha_domingo);
-        textLabelsFechas.add(lbl_fecha_lunes);
-        textLabelsFechas.add(lbl_fecha_martes);
-        textLabelsFechas.add(lbl_fecha_miercoles);
-        textLabelsFechas.add(lbl_fecha_jueves);
-        textLabelsFechas.add(lbl_fecha_viernes);
-        textLabelsFechas.add(lbl_fecha_sabado);
-    }
-    
-    private void almacenarLabelsDias(){
-        textDias.add(lbl_dia1);
-        textDias.add(lbl_dia2);
-        textDias.add(lbl_dia3);
-        textDias.add(lbl_dia4);
-        textDias.add(lbl_dia5);
-        textDias.add(lbl_dia6);
-        textDias.add(lbl_dia7);
-    }
-    
+        
 
     @FXML
     private void action_guardar_horario(ActionEvent event) {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        a.setContentText("¿Desea guardar esta planificación?");
-        Optional<ButtonType> result = a.showAndWait();
-        if (result.get() == ButtonType.OK){
-            int j=0;
-            String tipoC="ALMUERZO";
-            for (int i = 0; i<textFieldsComida.size(); i++){   
-                String comida="";
-                if(!textFieldsComida.get(i).getText().isEmpty())
-                    comida=textFieldsComida.get(i).getText();
-                if(i<7){
-                    String fechas=textLabelsFechas.get(i).getText();
-                    modelo_fecha_comida.agregar_fecha_comida(comida, Date.valueOf(fechas), tipoC);
-                    System.out.println(textFieldsComida.get(i).getText()+" Almuerzo "+textLabelsFechas.get(i).getText());                    
-                }
-                else{
-                    tipoC="MERIENDA";
-                    String fechas=textLabelsFechas.get(j).getText();
-                    modelo_fecha_comida.agregar_fecha_comida(comida, Date.valueOf(fechas), tipoC);
-                    System.out.println(textFieldsComida.get(i).getText()+" Merienda"+textLabelsFechas.get(j).getText());
-                    j++;
-                }
-            }
+        if(tf_comida.getText().isEmpty() || dp_fechacomida.getValue()==null)
+            Estatico.alertas_warning("Campos Vacíos", "Ingrese el nombre de la Comida y de la Fecha Planificada.");
+        else{
+            System.out.println(tf_comida.getText()+" "+ 
+                    dp_fechacomida.getValue().toString()+" "+                    
+                    cb_tipo.getValue().toString());
+            /*if(modelo_fecha_comida.agregar_fecha_comida(tf_comida.getText(), 
+                    dp_fechacomida.getValue().toString(), 
+                    cb_tipo.getValue().toString())){
+                    Estatico.alertas_information("Comida Agregada", "", Pos.TOP_CENTER);
+                    reset_table();
+            }*/
+                reset_table();
+        }
+
+    }      
+
+    
+    @FXML private void seleccionar_fecha(ActionEvent event) {
+        if(dp_planificacion.getValue()!=null){
+            tf_comida.setDisable(false);
+            dp_fechacomida.setDisable(false);
+            cb_tipo.setDisable(false);
+            btn_eliminarhorario.setDisable(false);
+            btn_guardar_horario.setDisable(false);
+            btn_modificarhorario.setDisable(false);
+            dp_fechacomida.setValue(dp_planificacion.getValue());
+            reset_table();
         }
     }
 
     @FXML
-    private void action_borrar_planificacion(ActionEvent event) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        for(TextField t : textFieldsComida)
-            t.setText("");
-        
-        a.setContentText("Campos borrados");
-        a.show();
-    }    
-    
-
-    @FXML private void seleccionar_fecha(ActionEvent event) {
-        LocalDate d = DatePicker.getValue();
-        System.err.println(d);
-        if(d!=null){
-            for(int i=0; i<7;i++){ 
-                LocalDate ld=d.plusDays(i);
-                textLabelsFechas.get(i).setText(String.format(ld+""));
-                String dia=traducirFecha(ld.getDayOfWeek()+"");
-                textDias.get(i).setText(dia);
-            }
+    private void action_table_planificacion(MouseEvent event) {
+        rowListCompSeleccionado = (ObservableList) tbl_planificación.getSelectionModel().getSelectedItem();
+        if (rowListCompSeleccionado != null) {
+            System.out.println(rowListCompSeleccionado.toString());
         }
     }
+
+
+    @FXML
+    private void action_modificarhorario(ActionEvent event) {
+        reset_table();
+    }
+
+    @FXML
+    private void action_eliminarhorario(ActionEvent event) {
+        reset_table();
+    }
     
-    private String traducirFecha(String DayOfWeek){
-        String dia="";
-        switch(DayOfWeek){
-            case "MONDAY":
-                dia= "LUNES";         
-                break;
-            case "TUESDAY":
-                dia= "MARTES";         
-                break;
-            case "WEDNESDAY":
-                dia= "MIERCOLES";         
-                break;    
-            case "THURSDAY":
-                dia= "JUEVES";         
-                break;
-            case "FRIDAY":
-                dia= "VIERNES";         
-                break;
-            case "SATURDAY":
-                dia= "SÁBADO";         
-                break;
-            case "SUNDAY":
-                dia= "DOMINGO";         
-                break;
+    private void reset_table(){
+        Query = get_fecha_comida+dp_planificacion.getValue().toString()+"' and DATE_ADD( '"+dp_planificacion.getValue().toString()+"' , INTERVAL 7 DAY)";
+        Estatico.obtenerTablaDinamica(-1, Query, tbl_planificación, "tbl_planificacion");
+        
+    }
+
+    @FXML
+    private void btn_nuevacomida(ActionEvent event) {        
+        VistaAgregarComida vac= new VistaAgregarComida("");
+        Estatico.ShowWindow(new Scene(vac.getRoot()), "PLATO", "/Recursos/Imagenes/parrilla.png", root);  
+    }
+
+
+    @FXML
+    private void action_filtrarfecha(MouseEvent event) {
+        if(dp_planificacion.getValue()!=null){
+            tf_comida.setDisable(false);
+            dp_fechacomida.setDisable(false);
+            cb_tipo.setDisable(false);
+            btn_eliminarhorario.setDisable(false);
+            btn_guardar_horario.setDisable(false);
+            btn_modificarhorario.setDisable(false);
+            dp_fechacomida.setValue(dp_planificacion.getValue());
+            reset_table();
         }
-        return dia;
     }
 }

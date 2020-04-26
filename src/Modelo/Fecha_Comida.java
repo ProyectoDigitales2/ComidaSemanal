@@ -8,7 +8,9 @@ package Modelo;
 import static Modelo.Comida.CONNECTION;
 import java.sql.CallableStatement;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 /**
  *
@@ -19,6 +21,9 @@ public class Fecha_Comida {
     private Date fecha;
     private String tipo;
     private final String agregar_fecha_comida = "{call   agregar_fecha_comida (?,?,?)}";
+    public final String get_fecha_comida = "select fa.id_fecha_comida as ID, c.nombre as Comida, fa.fecha as Fecha, fa.tipo as Tipo \n" +
+"from fecha_comida fa join comida c on c.id_comida= fa.id_comida\n" +
+"where fa.fecha between ? and DATE_ADD(?, INTERVAL 7 DAY);";
 
     public Fecha_Comida() {
     }
@@ -48,12 +53,12 @@ public class Fecha_Comida {
         this.tipo = tipo;
     }
     
-    public boolean agregar_fecha_comida(String comida, Date fecha, String tipo){
+    public boolean agregar_fecha_comida(String comida, String fecha, String tipo){
         try {
             CONNECTION.conectar();
-            CallableStatement sp = CONNECTION.getConnection().prepareCall(agregar_fecha_comida);
+            PreparedStatement sp = CONNECTION.getConnection().prepareStatement(agregar_fecha_comida);
             sp.setString(1, comida);
-            sp.setDate(2, fecha);
+            sp.setString(2, fecha);
             sp.setString(3, tipo);
             sp.execute();
             sp.close();

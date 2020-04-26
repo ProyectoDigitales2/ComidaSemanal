@@ -17,7 +17,9 @@ public class Plato {
     private int id_ingrediente;
     private int id_comida;
     private final String agregarPlato = "{call   agregarPlato (?,?)}";
-
+    private final String eliminarIngrediente="delete from plato "
+            + "where id_ingrediente = (select id_ingrediente from ingrediente where nombre = ?) and \n" +
+              "id_comida = ? ;";
     
     public Plato() {
     }
@@ -54,5 +56,23 @@ public class Plato {
         }
         return false;
     }
+    
+    public boolean eliminarIngredientePlato(String ingrediente, Integer id_comida){
+        try {
+            CONNECTION.conectar();
+            CallableStatement sp = CONNECTION.getConnection().prepareCall(eliminarIngrediente);
+            sp.setString(1, ingrediente);
+            sp.setInt(2, id_comida);
+            sp.execute();
+            sp.close();
+            return true;
+        } catch (SQLException e) {
+            e.getMessage();
+        } finally {
+            CONNECTION.desconectar();
+        }
+        return false;
+    }
+    
     
 }

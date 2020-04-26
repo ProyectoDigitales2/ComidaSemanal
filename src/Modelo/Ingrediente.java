@@ -24,7 +24,7 @@ public class Ingrediente {
 
     private final String obtenerIngredientes = "select * from ingrediente";
     private final String guardarIngredientes = "{call   agregarIngrediente (?)}";
-    private final String eliminarIngredientes = "{call   borrarIngrediente (?)}";
+    private final String modificarIngredientes = "{call   modificarIngrediente (?)}";
 
     public Ingrediente() {
     }
@@ -102,10 +102,10 @@ public class Ingrediente {
         return false;
     }
     
-    public boolean eliminarIngrediente(String ingrediente){
+    public boolean modificarIngrediente(String ingrediente){
         try {
             CONNECTION.conectar();
-            CallableStatement sp = CONNECTION.getConnection().prepareCall(eliminarIngredientes);
+            CallableStatement sp = CONNECTION.getConnection().prepareCall(modificarIngredientes);
             sp.setString(1, ingrediente);
             sp.execute();
             sp.close();

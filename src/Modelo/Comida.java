@@ -5,16 +5,11 @@
  */
 package Modelo;
 
-import static Modelo.Ingrediente.CONNECTION;
 import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -29,7 +24,7 @@ public class Comida {
     private String catego;
     private Categoria categoria;
 
-    private final String obtenerComida="SELECT * from comida c, categoria ca where c.id_categoria=ca.id_categoria order by c.nombre";
+    public final String obtenerComida="SELECT * from comida c, categoria ca where c.id_categoria=ca.id_categoria order by c.nombre";
     protected static final Singleton CONNECTION = Singleton.getInstance();
     
     private final String guardarComida = "{call   agregarComida (?,?,?)}";
@@ -37,6 +32,9 @@ public class Comida {
 
     private final String obtener_ultimaComida="SELECT MAX(id_comida) as id FROM comida;";
     private final String actualizar_comida = "update comida set nombre= ?,  temperatura=?, categoria=(select id_categoria from categoria where categoria=?) where id_comida=?;";
+    
+    private final String get_datosgeneral_comida = "select c.id_comida as id, c.nombre as nombre, c.temperatura as temperatura, ca.categoria as categoria from comida c, categoria ca where c.id_categoria = ca.id_categoria and c.nombre = ? ;";
+        
     public Comida() {
     }
 
@@ -95,6 +93,28 @@ public class Comida {
     public void setCatego(String catego) {
         this.catego = catego;
     }
+    
+    public ObservableList<String> cargarDatoGeneralComida(String comida){
+       ObservableList <String> listaComida = FXCollections.observableArrayList ();
+        try {
+            CONNECTION.conectar();
+            PreparedStatement ps = CONNECTION.getConnection().prepareStatement(get_datosgeneral_comida);
+            ps.setString(1, comida);
+            ResultSet rs = ps.executeQuery();            
+            while (rs.next()) { 
+                listaComida.add(rs.getString("id"));
+                listaComida.add(rs.getString("nombre"));
+                listaComida.add(rs.getString("temperatura"));
+                listaComida.add(rs.getString("categoria"));
+            }
+        } catch (SQLException  ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            CONNECTION.desconectar();
+        }
+        return listaComida;
+    }
+    
     
     public Integer id_ultimaComida(){
         Integer id = 0;

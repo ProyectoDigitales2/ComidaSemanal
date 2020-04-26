@@ -20,9 +20,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.controlsfx.control.textfield.TextFields;
 
 /**
@@ -38,7 +40,7 @@ public class VistaAgregarComida {
     private Button btn_agregar, btn_eliminar, btn_agregarcomida;
     
     private String txt_comida="";
-    private final String queryIngredientes="select i.nombre as Nombre from ingrediente i, comida c, plato p where p.id_ingrediente = i.id_ingrediente and c.id_comida= p.id_comida and c.id_comida=?;";
+    private final String queryIngredientes="select i.nombre as Ingrediente from ingrediente i, comida c, plato p where p.id_ingrediente = i.id_ingrediente and c.id_comida= p.id_comida and c.id_comida=?;";
     
     private Categoria modeloCategoria;
     private Ingrediente modeloIngrediente;
@@ -48,10 +50,13 @@ public class VistaAgregarComida {
     private ObservableList<String> cargarIngredientes;
     private ObservableList<String> cargarComida ;
     private ObservableList<Categoria> cargarCategoria;
+    private ObservableList rowListCompSeleccionado;
+    
+    private ObservableList listaGeneral;
     
     private Integer id_comida=0;
     
-    public VistaAgregarComida() {
+    public VistaAgregarComida(String comida) {
         modeloCategoria= new Categoria();
         modeloIngrediente = new Ingrediente();
         modeloComida = new Comida();
@@ -65,6 +70,15 @@ public class VistaAgregarComida {
         Center();
         Right();
         setTamanio(200);
+        listaGeneral = modeloComida.cargarDatoGeneralComida(comida);
+        if(!listaGeneral.isEmpty()){
+            id_comida = Integer.parseInt(listaGeneral.get(0).toString());
+            txt_comida = listaGeneral.get(1).toString();
+            tf_comida.setText(txt_comida);
+            cb_temperatura.setValue(listaGeneral.get(2).toString());
+            cb_categoria.setValue(listaGeneral.get(3).toString());
+        }
+        Estatico.obtenerTablaDinamica(id_comida, queryIngredientes, tb_ingrediente, "tbl_ingrediente");
     }
     
     private void inicializar(){
@@ -72,7 +86,6 @@ public class VistaAgregarComida {
         root.getStylesheets().add("/Recursos/Estilo/style1.css"); 
         root.setStyle("-fx-background-color: CCFFFF");
         tb_ingrediente = new TableView();
-        Estatico.obtenerTablaDinamica(id_comida, queryIngredientes, tb_ingrediente, "tbl_ingrediente");
         ObservableList<String> temperatura = FXCollections.observableArrayList( "CALIENTE", "FRIO" );
         root.setPadding(new Insets(10));
         lb_title=new Label("PLATO");lb_comida=new Label("COMIDA");lb_categoria=new Label("CATEGORIA");lb_temperatura=new Label("TEMPERATURA");lb_ingrediente=new Label("INGREDIENTES");
@@ -114,7 +127,9 @@ public class VistaAgregarComida {
         HBox hb = new HBox(10,tb_ingrediente, vb);
         hb.setAlignment(Pos.CENTER);
         root.setRight(hb);
+        action_table();
         guardar_ingrediente();
+        eliminar_ingrediente();
     }
     
     private void guardar_comida(){       
@@ -149,11 +164,27 @@ public class VistaAgregarComida {
             else{                
                 if(modeloIngrediente.guardarIngrediente(tf_INGREDIENTE.getText().toUpperCase().trim()))
                     Estatico.alertas_information("Nuevo Ingrediente", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" añadido.", Pos.TOP_CENTER);                
-                if(modeloPlato.agregarPlato(txt_comida, tf_INGREDIENTE.getText())){
+                if(modeloPlato.agregarPlato(txt_comida, tf_INGREDIENTE.getText().toUpperCase().trim())){
                     Estatico.alertas_information("Ingrediente Agregado", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" añadido.", Pos.TOP_CENTER);
                     tf_INGREDIENTE.setText("");
                     reset_table();
                 }else{
+                    Estatico.alertas_warning("Error en la base", "Datos erróneos o desconexión");         
+                }
+            }
+        });
+    }
+    
+    private void eliminar_ingrediente(){
+        btn_eliminar.setOnMouseClicked(e->{
+            if(tf_INGREDIENTE.getText().isEmpty())
+                Estatico.alertas_warning("Campos Vacíos", "Ingrese el nombre del Ingrediente a eliminar.");
+            else{                
+                if(modeloPlato.eliminarIngredientePlato(tf_INGREDIENTE.getText().toUpperCase().trim(), id_comida)){
+                    Estatico.alertas_information("Ingrediente Eliminado", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" eliminado.", Pos.TOP_CENTER);
+                    reset_table();
+                }
+                else{
                     Estatico.alertas_warning("Error en la base", "Datos erróneos o desconexión");         
                 }
             }
@@ -179,6 +210,16 @@ public class VistaAgregarComida {
 
     public Parent getRoot() {
         return root;
+    }
+    
+    private void action_table(){
+        tb_ingrediente.setOnMouseClicked(e->{
+            rowListCompSeleccionado = (ObservableList) tb_ingrediente.getSelectionModel().getSelectedItem();
+        if (rowListCompSeleccionado != null) {
+            System.out.println(rowListCompSeleccionado.toString());
+            tf_INGREDIENTE.setText(rowListCompSeleccionado.get(0).toString());
+        }
+        });
     }
     
     

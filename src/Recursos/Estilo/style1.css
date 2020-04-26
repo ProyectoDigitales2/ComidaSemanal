@@ -31,7 +31,7 @@ and open the template in the editor.
 
 #tituloCentral{    
     -fx-font-family: 'Open Sans ExtraBold';
-    -fx-font-size: 14;
+    -fx-font-size: 18;
 } 
 
 #subtitulo{
@@ -60,7 +60,7 @@ and open the template in the editor.
 
 .button:hover{
     -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgb(59,179,0), 20, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgb(0,0,0), 15, 0, 0, 0);
 }
 
 
