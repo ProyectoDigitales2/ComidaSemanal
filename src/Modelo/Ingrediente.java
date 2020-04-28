@@ -22,9 +22,9 @@ public class Ingrediente {
     
     protected static final Singleton CONNECTION = Singleton.getInstance();
 
-    private final String obtenerIngredientes = "select * from ingrediente";
+    public final String obtenerIngredientes = "select nombre, id_ingrediente from ingrediente";
     private final String guardarIngredientes = "{call   agregarIngrediente (?)}";
-    private final String modificarIngredientes = "{call   modificarIngrediente (?)}";
+    private final String modificarIngredientes = "update Ingrediente set nombre = ? where id_ingrediente = ? ;";
 
     public Ingrediente() {
     }
@@ -102,11 +102,12 @@ public class Ingrediente {
         return false;
     }
     
-    public boolean modificarIngrediente(String ingrediente){
+    public boolean modificarIngrediente(String ingrediente, Integer id_ingrediente){
         try {
             CONNECTION.conectar();
             CallableStatement sp = CONNECTION.getConnection().prepareCall(modificarIngredientes);
             sp.setString(1, ingrediente);
+            sp.setInt(2, id_ingrediente);
             sp.execute();
             sp.close();
             return true;

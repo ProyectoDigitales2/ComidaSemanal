@@ -182,6 +182,7 @@ public class VistaAgregarComida {
             else{                
                 if(modeloPlato.eliminarIngredientePlato(tf_INGREDIENTE.getText().toUpperCase().trim(), id_comida)){
                     Estatico.alertas_information("Ingrediente Eliminado", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" eliminado.", Pos.TOP_CENTER);
+                    tf_INGREDIENTE.setText("");
                     reset_table();
                 }
                 else{

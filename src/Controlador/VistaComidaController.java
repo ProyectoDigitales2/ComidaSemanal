@@ -35,7 +35,6 @@ public class VistaComidaController implements Initializable {
 
     @FXML private TableView tbl_comida;
     
-    @FXML private TextField tf_eliminarcomida;
     
     @FXML private TableColumn<Comida, String> CComidaNombre;
     @FXML private TableColumn<Comida, String> CComidaCategoria;
@@ -61,7 +60,6 @@ public class VistaComidaController implements Initializable {
         CComidaCategoria.setCellValueFactory(new PropertyValueFactory<>("catego"));
         llenarTablaComida();
         validarActualizarComida();
-        TextFields.bindAutoCompletion(tf_eliminarcomida, datosNombreComida);
     }    
 
     private void llenarTablaComida(){
@@ -74,19 +72,6 @@ public class VistaComidaController implements Initializable {
         Estatico.ShowWindow(new Scene(vac.getRoot()), "PLATO", "/Recursos/Imagenes/parrilla.png", root);        
     }
 
-    @FXML
-    private void action_eliminar_comida(ActionEvent event) {
-        
-        if(tf_eliminarcomida.getText().isEmpty())
-            JOptionPane.showMessageDialog(null, "Campo vacío, ingrese la comida a eliminar","ERROR" ,JOptionPane.WARNING_MESSAGE);
-        else if(modeloComida.eliminarComida(tf_eliminarcomida.getText().toUpperCase())){
-            tf_eliminarcomida.setText("");
-            JOptionPane.showMessageDialog(null, "Comida "+tf_eliminarcomida.getText()+ " borrada exitosamente");
-            llenarTablaComida(); 
-        }
-        else
-            JOptionPane.showMessageDialog(null, "Error al eliminar comida","ERROR" ,JOptionPane.WARNING_MESSAGE);
-    }
     
     private void validarActualizarComida(){
         if(validarActualizarTabla){
@@ -101,7 +86,6 @@ public class VistaComidaController implements Initializable {
         if (rowListCompSeleccionado != null) {
             System.out.println(rowListCompSeleccionado.get(0).toString());
             comidaSeleccionada = rowListCompSeleccionado.get(0).toString();
-            tf_eliminarcomida.setText(comidaSeleccionada);
             img_vercomida.setEffect(new DropShadow(25, Color.web("#216500")));
         }
 
