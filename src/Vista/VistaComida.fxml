@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,7 +14,7 @@
 
 <AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="760.0" style="-fx-background-color: #fce7a2;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador.VistaComidaController">
    <children>
-      <VBox alignment="CENTER" layoutX="454.0" layoutY="217.0" prefHeight="105.0" prefWidth="263.0" spacing="20.0" style="-fx-background-color: #fa8258; -fx-cursor: hand; -fx-background-radius: 10;">
+      <VBox alignment="CENTER" layoutX="454.0" layoutY="300.0" prefHeight="105.0" prefWidth="263.0" spacing="20.0" style="-fx-background-color: #fa8258; -fx-cursor: hand; -fx-background-radius: 10;">
          <children>
             <Label id="subtitulo" text="Registrar nueva comida">
                <font>
@@ -31,13 +32,13 @@
             <Font name="Arial Black" size="14.0" />
          </font>
       </Label>
-      <TableView fx:id="tbl_comida" layoutX="31.0" layoutY="73.0" onMouseClicked="#action_click_table" prefHeight="498.0" prefWidth="372.0">
+      <TableView fx:id="tbl_comida" layoutX="31.0" layoutY="102.0" onMouseClicked="#action_click_table" prefHeight="469.0" prefWidth="372.0">
         <columns>
           <TableColumn fx:id="CComidaNombre" prefWidth="234.0" text="Nombre" />
           <TableColumn fx:id="CComidaCategoria" minWidth="0.0" prefWidth="136.0" text="Categoría" />
         </columns>
       </TableView>
-      <ImageView fx:id="img_vercomida" fitHeight="99.0" fitWidth="99.0" layoutX="536.0" layoutY="87.0" onMouseClicked="#action_ver_comida" onMouseEntered="#entered_img" onMouseExited="#exited_img" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="img_vercomida" fitHeight="131.0" fitWidth="167.0" layoutX="520.0" layoutY="127.0" onMouseClicked="#action_ver_comida" onMouseEntered="#entered_img" onMouseExited="#exited_img" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../Recursos/Imagenes/plato.png" />
          </image>
@@ -45,5 +46,6 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ImageView>
+      <TextField fx:id="tf_comida" layoutX="31.0" layoutY="62.0" prefHeight="25.0" prefWidth="372.0" promptText="Buscar comida..." />
    </children>
 </AnchorPane>

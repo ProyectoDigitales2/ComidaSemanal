@@ -10,17 +10,19 @@ import Modelo.Ingrediente;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.effect.DropShadow;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javax.swing.JOptionPane;
 import org.controlsfx.control.textfield.TextFields;
 
@@ -46,6 +48,8 @@ public class VistaIngredienteController implements Initializable {
     private ObservableList rowListCompSeleccionado;
     private String ingrdSeleccionado="";
     private Integer id_ingrediente=0;
+    @FXML
+    private TextField tf_filtrarIngrediente;
 
     /**
      * Initializes the controller class.
@@ -53,10 +57,14 @@ public class VistaIngredienteController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {          
         //root.getStylesheets().add("/Recursos/Estilo/style1.css");  
+        Estatico.limiTextField(tf_agregar, 49);
+        Estatico.limiTextField(tf_eliminar, 49);
         Estatico.obtenerTablaDinamica(-1, modeloIngrediente.obtenerIngredientes, tbl_ingredientes, "tbl_ingrediente");
+        busqueda();
         CIngredienteNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         TextFields.bindAutoCompletion(tf_agregar, cargarIngredientes);
         TextFields.bindAutoCompletion(tf_eliminar, cargarIngredientes);
+        TextFields.bindAutoCompletion(tf_filtrarIngrediente, cargarIngredientes);
     }    
     
 
@@ -101,6 +109,17 @@ public class VistaIngredienteController implements Initializable {
             tf_eliminar.setText(ingrdSeleccionado);
             System.out.println(rowListCompSeleccionado);
         }
+    }
+
+    private void busqueda(){
+        tf_filtrarIngrediente.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) { 
+                    Estatico.obtenerTablaDinamica(-1, modeloIngrediente.obtenerIngredientes+" where nombre like '%"+tf_filtrarIngrediente.getText().trim().toUpperCase()+"%'", tbl_ingredientes, "tbl_ingrediente");
+
+            }
+        });
     }
     
 }

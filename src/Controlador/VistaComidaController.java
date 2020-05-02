@@ -9,6 +9,8 @@ import Modelo.Comida;
 import Modelo.Estatico;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,6 +52,8 @@ public class VistaComidaController implements Initializable {
     @FXML
     private ImageView img_vercomida;
     private String Query="select c.nombre as Nombre, ca.categoria as Categoría from comida c, categoria ca where c.id_categoria = ca.id_categoria";
+    @FXML
+    private TextField tf_comida;
     /**
      * Initializes the controller class.
      */
@@ -60,6 +64,7 @@ public class VistaComidaController implements Initializable {
         CComidaCategoria.setCellValueFactory(new PropertyValueFactory<>("catego"));
         llenarTablaComida();
         validarActualizarComida();
+        busqueda();
     }    
 
     private void llenarTablaComida(){
@@ -68,7 +73,7 @@ public class VistaComidaController implements Initializable {
     
     @FXML
     private void action_añadir_comida(ActionEvent event) {
-        VistaAgregarComida vac= new VistaAgregarComida("");
+        VistaAgregarComida vac= new VistaAgregarComida("", tbl_comida, null);
         Estatico.ShowWindow(new Scene(vac.getRoot()), "PLATO", "/Recursos/Imagenes/parrilla.png", root);        
     }
 
@@ -94,7 +99,7 @@ public class VistaComidaController implements Initializable {
     @FXML
     private void action_ver_comida(MouseEvent event) {
         if(!comidaSeleccionada.isEmpty()){
-            VistaAgregarComida vac= new VistaAgregarComida(comidaSeleccionada);
+            VistaAgregarComida vac= new VistaAgregarComida(comidaSeleccionada, tbl_comida, null);
             Estatico.ShowWindow(new Scene(vac.getRoot()), "PLATO", "/Recursos/Imagenes/parrilla.png", root);
         }        
     }
@@ -109,6 +114,18 @@ public class VistaComidaController implements Initializable {
     private void entered_img(MouseEvent event) {
         img_vercomida.setFitHeight(120);
         img_vercomida.setFitWidth(120);
+    }
+    
+    private void busqueda(){
+        tf_comida.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {    
+                
+                    Estatico.obtenerTablaDinamica(-1, Query+" and nombre like '%"+tf_comida.getText().trim().toUpperCase()+"%'", tbl_comida, "tbl_comida");
+
+            }
+        });
     }
     
 }

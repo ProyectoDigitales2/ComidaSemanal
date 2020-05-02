@@ -31,7 +31,7 @@ public class Comida {
     private final String eliminarComida = "{call   eliminarComida (?)}";
 
     private final String obtener_ultimaComida="SELECT MAX(id_comida) as id FROM comida;";
-    private final String actualizar_comida = "update comida set nombre= ?,  temperatura=?, categoria=(select id_categoria from categoria where categoria=?) where id_comida=?;";
+    private final String actualizar_comida = "update comida set nombre= ?,  temperatura=?, id_categoria=(select id_categoria from categoria where categoria=?) where id_comida=?;";
     
     private final String get_datosgeneral_comida = "select c.id_comida as id, c.nombre as nombre, c.temperatura as temperatura, ca.categoria as categoria from comida c, categoria ca where c.id_categoria = ca.id_categoria and c.nombre = ? ;";
         

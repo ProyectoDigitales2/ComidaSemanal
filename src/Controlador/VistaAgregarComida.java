@@ -20,11 +20,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import org.controlsfx.control.textfield.TextFields;
 
 /**
@@ -56,11 +54,17 @@ public class VistaAgregarComida {
     
     private Integer id_comida=0;
     
-    public VistaAgregarComida(String comida) {
+    private TableView tbl;
+    private TextField tf;
+    
+    public VistaAgregarComida(String comida, TableView tbl, TextField tf) {
         modeloCategoria= new Categoria();
         modeloIngrediente = new Ingrediente();
         modeloComida = new Comida();
         modeloPlato = new Plato();
+        
+        this.tbl = tbl;
+        this.tf = tf;
         
         cargarCategoria=modeloCategoria.cargarCategoria();
         cargarIngredientes = modeloIngrediente.cargarNombreIngredientes();
@@ -71,6 +75,9 @@ public class VistaAgregarComida {
         Right();
         setTamanio(200);
         listaGeneral = modeloComida.cargarDatoGeneralComida(comida);
+        Estatico.limiTextField(tf_comida, 49);
+        Estatico.limiTextField(tf_INGREDIENTE, 49);
+        
         if(!listaGeneral.isEmpty()){
             id_comida = Integer.parseInt(listaGeneral.get(0).toString());
             txt_comida = listaGeneral.get(1).toString();
@@ -78,7 +85,26 @@ public class VistaAgregarComida {
             cb_temperatura.setValue(listaGeneral.get(2).toString());
             cb_categoria.setValue(listaGeneral.get(3).toString());
         }
+        if(id_comida<=0){
+            activar_Desactivar(true);
+        }
         Estatico.obtenerTablaDinamica(id_comida, queryIngredientes, tb_ingrediente, "tbl_ingrediente");
+    }
+    
+    private void activar_Desactivar(Boolean bln){
+        tf_INGREDIENTE.setDisable(bln);
+        btn_agregar.setDisable(bln);
+        btn_eliminar.setDisable(bln);
+        
+    }
+    
+    private void actualizarComponentesExternos(){
+        String Query="select c.nombre as Nombre, ca.categoria as Categoría from comida c, categoria ca where c.id_categoria = ca.id_categoria";
+        if(tbl!=null)
+            Estatico.obtenerTablaDinamica(-1, Query , tbl, "tbl_comida"); 
+        if(tf!=null)
+            TextFields.bindAutoCompletion(tf, cargarComida);            
+            
     }
     
     private void inicializar(){
@@ -142,10 +168,13 @@ public class VistaAgregarComida {
                         && id_comida==0 ){
                     Estatico.alertas_information("Comida "+txt_comida, "Agregado Nueva Comida.\nInserte los ingredientes.", Pos.TOP_CENTER);
                     id_comida = modeloComida.id_ultimaComida();
+                    activar_Desactivar(false);
+                    actualizarComponentesExternos();
                     System.out.println(id_comida);
                 } else if (id_comida>0 && 
                         modeloComida.actualizar_comida(id_comida, txt_comida, cb_temperatura.getValue().toString(), cb_categoria.getValue().toString())
                         ) {
+                    actualizarComponentesExternos();
                     Estatico.alertas_information("Comida "+tf_comida.getText()+" Modificada", "Actualizado Comida", Pos.TOP_CENTER);
                     
                     
@@ -163,9 +192,9 @@ public class VistaAgregarComida {
                 Estatico.alertas_warning("Campos Vacíos", "Ingrese el nombre del Ingrediente.");
             else{                
                 if(modeloIngrediente.guardarIngrediente(tf_INGREDIENTE.getText().toUpperCase().trim()))
-                    Estatico.alertas_information("Nuevo Ingrediente", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" añadido.", Pos.TOP_CENTER);                
+                    Estatico.alertas_information("Nuevo Ingrediente", tf_INGREDIENTE.getText().toUpperCase(), Pos.BOTTOM_RIGHT);                
                 if(modeloPlato.agregarPlato(txt_comida, tf_INGREDIENTE.getText().toUpperCase().trim())){
-                    Estatico.alertas_information("Ingrediente Agregado", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" añadido.", Pos.TOP_CENTER);
+                    Estatico.alertas_information("Ingrediente Agregado", "Ingrediente: "+tf_INGREDIENTE.getText().toUpperCase()+" añadido.", Pos.BOTTOM_RIGHT);
                     tf_INGREDIENTE.setText("");
                     reset_table();
                 }else{

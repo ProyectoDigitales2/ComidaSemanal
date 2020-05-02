@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,6 +22,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -72,7 +74,23 @@ public class Estatico {
               .text(Texto)
               .showInformation();
     }
-    
+
+
+    public static void limiTextField(TextField tf, int limit) {
+        tf.lengthProperty().addListener(new ChangeListener <Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable,
+                    Number oldValue, Number newValue) {
+                if (newValue.intValue() > oldValue.intValue()) {
+                    // Check if the new character is greater than LIMIT
+                    if (tf.getText().length() >= limit) {
+                        // if it's 11th character then just setText to previous one
+                        tf.setText(tf.getText().substring(0, limit));
+                    }
+                }
+            }
+        });
+    } 
     public static void obtenerTablaDinamica( int idArgumento, String Query, TableView table, String idTable){
         ObservableList<ObservableList> ref = FXCollections.observableArrayList();
         try{
@@ -118,5 +136,7 @@ public class Estatico {
             System.out.println("Error on Building Table: "+e.getMessage());
         }
     }
+    
+    
     
 }

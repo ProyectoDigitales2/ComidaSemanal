@@ -79,7 +79,7 @@ public class VistaHorarioController implements Initializable {
             if(modelo_fecha_comida.agregar_fecha_comida(tf_comida.getText().toUpperCase().trim(), 
                     dp_fechacomida.getValue().toString(), 
                     cb_tipo.getValue().toString())){
-                    Estatico.alertas_information("Planificación Agregada", "", Pos.TOP_CENTER);
+                    Estatico.alertas_information("Planificación Agregada", tf_comida.getText().toUpperCase()+"\n"+dp_fechacomida.getValue().toString(), Pos.BOTTOM_RIGHT);
                     reset_table();
             }else{
                 Estatico.alertas_warning("ERROR", "Error en los datos o desconexión.");
@@ -168,7 +168,7 @@ public class VistaHorarioController implements Initializable {
 
     @FXML
     private void btn_nuevacomida(ActionEvent event) {        
-        VistaAgregarComida vac= new VistaAgregarComida("");
+        VistaAgregarComida vac= new VistaAgregarComida("", null, tf_comida);
         Estatico.ShowWindow(new Scene(vac.getRoot()), "PLATO", "/Recursos/Imagenes/parrilla.png", root);  
     }
 
