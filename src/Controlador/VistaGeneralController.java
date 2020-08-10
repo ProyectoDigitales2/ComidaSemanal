@@ -5,7 +5,6 @@
  */
 package Controlador;
 
-import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,14 +25,6 @@ import javafx.scene.layout.Pane;
  */
 public class VistaGeneralController implements Initializable {
 
-    @FXML
-    private JFXButton btn_ingredientes;
-    @FXML
-    private JFXButton btn_comida;
-    @FXML
-    private JFXButton btn_horario;
-    @FXML
-    private JFXButton btn_listado;
     @FXML
     private Pane parent_root;
 

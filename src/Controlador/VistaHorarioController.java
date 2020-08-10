@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -22,8 +23,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.controlsfx.control.textfield.TextFields;
 
 /**
@@ -167,9 +172,24 @@ public class VistaHorarioController implements Initializable {
     }
 
     @FXML
-    private void btn_nuevacomida(ActionEvent event) {        
+    private void btn_nuevacomida(ActionEvent event) {   
+        System.out.println("asdda");
         VistaAgregarComida vac= new VistaAgregarComida("", null, tf_comida);
-        Estatico.ShowWindow(new Scene(vac.getRoot()), "PLATO", "/Recursos/Imagenes/parrilla.png", root);  
+        Stage st= new Stage();
+        st.setScene(new Scene(vac.getRoot()));
+        st.setTitle("PLATO");
+        st.initModality(Modality.WINDOW_MODAL);
+        st.getIcons().add(new Image("/Recursos/Imagenes/parrilla.png"));        
+        st.initOwner(root.getScene().getWindow() );
+        st.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                datosComida =modeloComida.cargarNombreComida();  
+                TextFields.bindAutoCompletion(tf_comida, datosComida);
+            }
+        }
+        );
+        st.getOnCloseRequest().handle(new WindowEvent(st, WindowEvent.WINDOW_CLOSE_REQUEST));
+        st.showAndWait();
     }
 
 

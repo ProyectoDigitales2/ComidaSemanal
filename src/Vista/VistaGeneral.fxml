@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -23,11 +24,14 @@
                               <Image url="@../Recursos/Imagenes/naranja.png" />
                            </image>
                         </ImageView>
-                        <JFXButton fx:id="btn_ingredientes" alignment="TOP_RIGHT" onAction="#ir_ingredientes" prefHeight="36.0" prefWidth="225.0" style="-fx-cursor: hand;" text="INGREDIENTES" textAlignment="CENTER" textFill="#fec82e">
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#ir_ingredientes" prefHeight="32.0" prefWidth="187.0" text="INGREDIENTES">
                            <font>
-                              <Font name="Arial Bold" size="19.0" />
+                              <Font name="Arial Black" size="14.0" />
                            </font>
-                        </JFXButton>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
                      </children>
                   </HBox>
                   <HBox prefHeight="42.0" prefWidth="237.0">
@@ -37,11 +41,14 @@
                               <Image url="@../Recursos/Imagenes/pizza.png" />
                            </image>
                         </ImageView>
-                        <JFXButton fx:id="btn_comida" alignment="CENTER_RIGHT" onAction="#ir_comida" prefHeight="29.0" prefWidth="195.0" style="-fx-cursor: hand;" text="COMIDA" textFill="#fec82e">
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#ir_comida" prefHeight="32.0" prefWidth="190.0" text="COMIDA">
                            <font>
-                              <Font name="Arial Bold" size="19.0" />
+                              <Font name="Arial Black" size="14.0" />
                            </font>
-                        </JFXButton>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
                      </children>
                   </HBox>
                   <HBox prefHeight="42.0" prefWidth="237.0">
@@ -51,11 +58,14 @@
                               <Image url="@../Recursos/Imagenes/cabaña.png" />
                            </image>
                         </ImageView>
-                        <JFXButton fx:id="btn_horario" alignment="TOP_RIGHT" onAction="#ir_horario" prefHeight="36.0" prefWidth="247.0" style="-fx-cursor: hand;" text="HORARIO" textFill="#fec82e">
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#ir_horario" prefHeight="32.0" prefWidth="188.0" text="HORARIO">
                            <font>
-                              <Font name="Arial Bold" size="19.0" />
+                              <Font name="Arial Black" size="14.0" />
                            </font>
-                        </JFXButton>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
                      </children>
                   </HBox>
                   <HBox prefHeight="40.0" prefWidth="237.0">
@@ -65,11 +75,14 @@
                               <Image url="@../Recursos/Imagenes/menu.png" />
                            </image>
                         </ImageView>
-                        <JFXButton fx:id="btn_listado" alignment="CENTER_RIGHT" onAction="#ir_listado" prefHeight="40.0" prefWidth="194.0" style="-fx-cursor: hand;" text="LISTADO" textFill="#fec82e">
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#ir_listado" prefHeight="32.0" prefWidth="189.0" text="LISTADO">
                            <font>
-                              <Font name="Arial Bold" size="19.0" />
+                              <Font name="Arial Black" size="14.0" />
                            </font>
-                        </JFXButton>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
                      </children>
                   </HBox>
                </children>
