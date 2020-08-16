@@ -10,8 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import redis.clients.jedis.Jedis;
 
 /**
  *
@@ -23,9 +25,12 @@ public class Comida {
     private String temperatura;
     private String catego;
     private Categoria categoria;
+    
 
     public final String obtenerComida="SELECT * from comida c, categoria ca where c.id_categoria=ca.id_categoria order by c.nombre";
+    
     protected static final Singleton CONNECTION = Singleton.getInstance();
+    protected static final Redis JEDIS = Redis.getInstance();
     
     private final String guardarComida = "{call   agregarComida (?,?,?)}";
     private final String eliminarComida = "{call   eliminarComida (?)}";
@@ -176,19 +181,26 @@ public class Comida {
     }
     
     public ObservableList<String> cargarNombreComida(){
+       Set<String> comidita = null;
+       
        ObservableList <String> listaComida = FXCollections.observableArrayList ();
         try {
+            JEDIS.conectar();
             CONNECTION.conectar();
             Statement s = CONNECTION.getConnection().createStatement();
             ResultSet rs = s.executeQuery (obtenerComida);            
             while (rs.next()) { 
-                listaComida.add(rs.getString("nombre"));
+                String comidaIndividual= rs.getString("nombre");
+                //listaComida.add(comidaIndividual);                
+                JEDIS.getJedis().sadd("comidas", comidaIndividual);
             }
+            comidita = JEDIS.getJedis().smembers("comidas");
         } catch (SQLException  ex) {
             System.out.println(ex.getMessage());
         } finally {
             CONNECTION.desconectar();
         }
+        listaComida.addAll(comidita);
         return listaComida;
     }
 
