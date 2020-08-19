@@ -34,6 +34,15 @@ public class Redis {
             System.out.println(e.getMessage());
         }
     }
+    
+    public void desconectar(){
+        try{
+            this.jedis.close();
+            
+        } catch(Exception e){            
+            System.out.println(e.getMessage());
+        }
+    }
 
     public Jedis getJedis() {
         return jedis;

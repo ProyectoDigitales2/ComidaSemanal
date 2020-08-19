@@ -180,24 +180,34 @@ public class Comida {
         return listaComida;
     }
     
-    public ObservableList<String> cargarNombreComida(){
-       Set<String> comidita = null;
-       
-       ObservableList <String> listaComida = FXCollections.observableArrayList ();
+    public ObservableList<String> cargarNombreComida() {
+        Set<String> comidita = null;
+
+        ObservableList<String> listaComida = FXCollections.observableArrayList();
+        JEDIS.conectar();
+        
+        if (JEDIS.getJedis().exists("comidas")) {
+            System.out.println("Ya existo comidas en la caché");
+            comidita = JEDIS.getJedis().smembers("comidas");
+            listaComida.addAll(comidita);
+            JEDIS.desconectar();
+            return listaComida;
+        }
+
         try {
-            JEDIS.conectar();
             CONNECTION.conectar();
             Statement s = CONNECTION.getConnection().createStatement();
-            ResultSet rs = s.executeQuery (obtenerComida);            
-            while (rs.next()) { 
-                String comidaIndividual= rs.getString("nombre");
+            ResultSet rs = s.executeQuery(obtenerComida);
+            while (rs.next()) {
+                String comidaIndividual = rs.getString("nombre");
                 //listaComida.add(comidaIndividual);                
                 JEDIS.getJedis().sadd("comidas", comidaIndividual);
             }
             comidita = JEDIS.getJedis().smembers("comidas");
-        } catch (SQLException  ex) {
+        } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         } finally {
+            JEDIS.desconectar();
             CONNECTION.desconectar();
         }
         listaComida.addAll(comidita);
@@ -207,23 +217,26 @@ public class Comida {
     
     public boolean guardarComida(String comida, String tempt, String categ){
         try {
+            JEDIS.conectar();
             CONNECTION.conectar();
             CallableStatement sp = CONNECTION.getConnection().prepareCall(guardarComida);
             sp.setString(1, comida);
             sp.setString(2, tempt);
             sp.setString(3, categ);
             sp.execute();
+            JEDIS.getJedis().sadd("comidas", comida);
             sp.close();
             return true;
         } catch (SQLException e) {
             e.getMessage();
         } finally {
+            JEDIS.desconectar();
             CONNECTION.desconectar();
         }
         return false;
     }
     
-    public boolean eliminarComida(String comida){
+    /*public boolean eliminarComida(String comida){
         try {
             CONNECTION.conectar();
             CallableStatement sp = CONNECTION.getConnection().prepareCall(eliminarComida);
@@ -237,7 +250,7 @@ public class Comida {
             CONNECTION.desconectar();
         }
         return false;
-    }
+    }*/
      
     
     
