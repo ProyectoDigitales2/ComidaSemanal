@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="760.0" style="-fx-background-color: #CEECF5;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador.VistaHorarioController">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#click_ranking_food" prefHeight="600.0" prefWidth="760.0" style="-fx-background-color: #CEECF5;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador.VistaHorarioController">
    <children>
       <Label id="tituloCentral" layoutX="60.0" layoutY="25.0" text="PLANIFICACIÓN SEMANAL">
          <font>
@@ -29,7 +29,7 @@
           <TableColumn prefWidth="75.0" text="C2" />
         </columns>
       </TableView>
-      <VBox alignment="CENTER_LEFT" layoutX="500.0" layoutY="79.0" prefHeight="496.0" prefWidth="222.0" spacing="15.0">
+      <VBox alignment="CENTER_LEFT" layoutX="495.0" layoutY="150.0" prefHeight="426.0" prefWidth="222.0" spacing="15.0">
          <children>
             <Label id="subtitulo" text="COMIDA">
                <font>
@@ -90,6 +90,14 @@
          <image>
             <Image url="@../Recursos/Imagenes/search.png" />
          </image>
+      </ImageView>
+      <ImageView fitHeight="86.0" fitWidth="75.0" layoutX="570.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Recursos/Imagenes/logro.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </ImageView>
    </children>
 </AnchorPane>

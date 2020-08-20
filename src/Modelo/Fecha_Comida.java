@@ -9,8 +9,12 @@ import static Modelo.Comida.CONNECTION;
 import java.sql.CallableStatement;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -28,6 +32,12 @@ public class Fecha_Comida {
             + "set fecha =?, id_comida=(select id_comida from Comida where nombre = ?), tipo = ? "
             + "where id_fecha_comida= ? ;";
     public final String delete_fecha_comida="delete from fecha_comida where id_fecha_comida= ?;";
+    private final String get_ranking_7 = "select c.nombre as Nombre, COUNT(fc.id_fecha_comida) as Consumo\n" +
+    "from comida c,  fecha_comida fc \n" +
+    "where c.id_comida = fc.id_comida and month(now()) = MONTH(fc.fecha)\n" +
+    "GROUP BY c.nombre\n" +
+    "order by Consumo DESC\n" +
+    "Limit 7;";
     
     public Fecha_Comida() {
     }
@@ -55,6 +65,24 @@ public class Fecha_Comida {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+    
+    public ObservableList<String> cargarRanking(){
+       ObservableList <String> listaIngrediente = FXCollections.observableArrayList ();
+        try {
+            CONNECTION.conectar();
+            Statement s = CONNECTION.getConnection().createStatement();
+            ResultSet rs = s.executeQuery (get_ranking_7);            
+            while (rs.next()) {                
+                listaIngrediente.add(
+                        rs.getString("Nombre")+"|"+rs.getString("Consumo"));
+            }
+        } catch (SQLException  ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            CONNECTION.desconectar();
+        }
+        return listaIngrediente;
     }
     
     public boolean agregar_fecha_comida(String comida, String fecha, String tipo){

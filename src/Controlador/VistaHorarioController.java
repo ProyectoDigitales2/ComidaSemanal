@@ -206,4 +206,11 @@ public class VistaHorarioController implements Initializable {
             reset_table();
         }
     }
+
+    @FXML
+    private void click_ranking_food(MouseEvent event) {
+        VistaRanking7 vr7= new VistaRanking7();        
+        Estatico.ShowWindow(new Scene(vr7.getRoot()), "Ranking 7", "/Recursos/Imagenes/logro.png", root);
+        
+    }
 }
