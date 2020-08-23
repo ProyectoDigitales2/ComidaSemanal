@@ -157,7 +157,7 @@ public class Comida {
     
     
     
-    public ObservableList<Comida> cargarComida(){
+    /*public ObservableList<Comida> cargarComida(){
        ObservableList <Comida> listaComida = FXCollections.observableArrayList ();
         try {
             CONNECTION.conectar();
@@ -178,7 +178,7 @@ public class Comida {
             CONNECTION.desconectar();
         }
         return listaComida;
-    }
+    }*/
     
     public ObservableList<String> cargarNombreComida() {
         Set<String> comidita = null;

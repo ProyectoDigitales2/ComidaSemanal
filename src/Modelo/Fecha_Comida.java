@@ -6,13 +6,12 @@
 package Modelo;
 
 import static Modelo.Comida.CONNECTION;
-import java.sql.CallableStatement;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
+import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -24,6 +23,10 @@ public class Fecha_Comida {
     private int id_comida;
     private Date fecha;
     private String tipo;
+    private Map<String, String> rankings = null;
+    
+    protected static final Redis JEDIS = Redis.getInstance();
+
     private final String agregar_fecha_comida = "{call   agregar_fecha_comida (?,?,?)}";
     public final String get_fecha_comida = "select fa.id_fecha_comida as ID, c.nombre as Comida, fa.fecha as Fecha, fa.tipo as Tipo \n" +
 "from fecha_comida fa join comida c on c.id_comida= fa.id_comida\n" +
@@ -67,23 +70,45 @@ public class Fecha_Comida {
         this.tipo = tipo;
     }
     
-    public ObservableList<String> cargarRanking(){
-       ObservableList <String> listaIngrediente = FXCollections.observableArrayList ();
+    public Map<String, String> cargarRanking(){
+        JEDIS.conectar();        
+        
+        if (JEDIS.getJedis().exists("ranking")) {
+            System.out.println("Ya existo ranking en la caché");
+            rankings = JEDIS.getJedis().hgetAll("ranking");
+            JEDIS.desconectar();
+            return rankings;
+        }
+        JEDIS.desconectar();       
+        return recargarRanking();
+        
+    }
+    
+    public Map<String, String> recargarRanking(){
+        
+        JEDIS.conectar();
+        
         try {
             CONNECTION.conectar();
             Statement s = CONNECTION.getConnection().createStatement();
-            ResultSet rs = s.executeQuery (get_ranking_7);            
-            while (rs.next()) {                
-                listaIngrediente.add(
-                        rs.getString("Nombre")+"|"+rs.getString("Consumo"));
+            ResultSet rs = s.executeQuery (get_ranking_7);
+            
+            if (JEDIS.getJedis().exists("ranking"))
+                JEDIS.getJedis().del("ranking");                
+            
+            while (rs.next()) {
+                JEDIS.getJedis().hset("ranking", rs.getString("Nombre"), rs.getString("Consumo"));
+                //listaIngrediente.add(rs.getString("Nombre")+"|"+rs.getString("Consumo"));
             }
+            rankings = JEDIS.getJedis().hgetAll("ranking");
         } catch (SQLException  ex) {
             System.out.println(ex.getMessage());
         } finally {
+            JEDIS.desconectar();
             CONNECTION.desconectar();
         }
-        return listaIngrediente;
-    }
+        return rankings;
+    } 
     
     public boolean agregar_fecha_comida(String comida, String fecha, String tipo){
         try {
